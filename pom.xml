@@ -142,12 +142,12 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>r09</version>
+      <version>13.0</version>
     </dependency>
     <dependency>
       <groupId>org.mozilla</groupId>
       <artifactId>rhino</artifactId>
-      <version>1.7R3</version>
+      <version>1.7R4</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
