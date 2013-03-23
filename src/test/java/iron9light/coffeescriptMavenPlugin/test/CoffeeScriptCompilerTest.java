@@ -16,7 +16,7 @@ public class CoffeeScriptCompilerTest {
     @Test
     public void testVersion() throws MalformedURLException {
         URL url = getClass().getResource("/coffee-script.js");
-        CoffeeScriptCompiler compiler = new CoffeeScriptCompiler(url, false);
+        CoffeeScriptCompiler compiler = new CoffeeScriptCompiler(url, false, false);
         assertThat(compiler.version, equalTo("1.6.2"));
     }
 }

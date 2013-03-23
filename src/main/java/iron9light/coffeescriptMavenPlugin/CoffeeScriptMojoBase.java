@@ -37,6 +37,13 @@ public abstract class CoffeeScriptMojoBase extends AbstractMojo {
      */
     private Boolean bare;
 
+	/**
+	 * Source map support.
+	 *
+	 * @parameter default-value="false"
+	 */
+	private Boolean sourceMap;
+
     /**
      * Only compile modified files.
      *
@@ -60,7 +67,7 @@ public abstract class CoffeeScriptMojoBase extends AbstractMojo {
     private static URL defaultCoffeeScriptUrl = CoffeeScriptMojoBase.class.getResource("/coffee-script.js");
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        CoffeeScriptCompiler compiler = new CoffeeScriptCompiler(getCoffeeScriptUrl(), bare);
+        CoffeeScriptCompiler compiler = new CoffeeScriptCompiler(getCoffeeScriptUrl(), bare, sourceMap);
         getLog().info(String.format("Coffeescript version: %s", compiler.version));
 
         if (!srcDir.exists()) {
@@ -88,8 +95,19 @@ public abstract class CoffeeScriptMojoBase extends AbstractMojo {
         for (Path coffeeFile : coffeeFiles) {
             String coffeeFileName = sourceDirectory.relativize(coffeeFile).toString();
             String jsFileName = getJsFileName(coffeeFileName);
+			String sourceMapFileName = sourceMap ? getSourceMapFileName(jsFileName) : null;
             Path jsFile = outputDirectory.resolve(jsFileName);
-            if (!compileCoffeeFile(compiler, coffeeFile, jsFile, coffeeFileName, jsFileName)) {
+			Path sourceMapFile = sourceMap ? outputDirectory.resolve(sourceMapFileName) : null;
+			Path copiedCoffeeFile = sourceMap ? outputDirectory.resolve(coffeeFileName) : null;
+            if (!compileCoffeeFile(
+					compiler,
+					coffeeFile,
+					copiedCoffeeFile,
+					jsFile,
+					sourceMapFile,
+					coffeeFileName,
+					jsFileName,
+					sourceMapFileName)) {
                 failedFileNames.add(coffeeFileName);
             }
         }
@@ -134,16 +152,29 @@ public abstract class CoffeeScriptMojoBase extends AbstractMojo {
         return coffeeFileName.substring(0, coffeeFileName.length() - ".coffee".length()) + ".js";
     }
 
+	protected String getSourceMapFileName(String jsFileName) {
+		return jsFileName + ".map";
+	}
+
     protected boolean isCoffeeFile(Path file) {
         return file.toString().endsWith(".coffee");
     }
 
-    protected boolean compileCoffeeFile(CoffeeScriptCompiler compiler, Path coffeeFile, Path jsFile, String coffeeFileName, String jsFileName) throws IOException {
+    protected boolean compileCoffeeFile(
+			CoffeeScriptCompiler compiler,
+			Path coffeeFile,
+			Path copiedCoffeeFile,
+			Path jsFile,
+			Path sourceMapFile,
+			String coffeeFileName,
+			String jsFileName,
+			String sourceMapFileName) throws IOException {
         Path jsParent = jsFile.getParent();
         if (!Files.exists(jsParent)) {
             Files.createDirectories(jsParent);
-        } else if (Files.isDirectory(jsFile)) {
-            getLog().warn(String.format("Cannot compile to %s, as there is a Directory with the same name", jsFileName));
+        } else if (!doDirectoryCheck(jsFile, jsFileName)
+				|| !doDirectoryCheck(copiedCoffeeFile, coffeeFileName)
+				|| !doDirectoryCheck(sourceMapFile, sourceMapFileName)) {
             return false;
         } else if (modifiedOnly && Files.exists(jsFile)) {
             if (Files.getLastModifiedTime(jsFile).compareTo(Files.getLastModifiedTime(coffeeFile)) > 0) {
@@ -155,9 +186,19 @@ public abstract class CoffeeScriptMojoBase extends AbstractMojo {
         String coffeeSource = readAllString(coffeeFile);
 
         try {
-            String jsSource = compiler.compile(coffeeSource);
+            String[] contents = compiler.compile(coffeeSource, coffeeFileName, jsFileName, sourceMapFileName);
+			String jsSource = contents[0];
             writeString(jsFile, jsSource);
             getLog().info(String.format("Compiled: %s [%s]", coffeeFileName, new java.util.Date()));
+
+			if (sourceMap) {
+				Files.copy(coffeeFile, copiedCoffeeFile, StandardCopyOption.REPLACE_EXISTING);
+				getLog().info(String.format("Copied: %s [%s]", coffeeFileName, new java.util.Date()));
+
+				String mapContent = contents[1];
+				writeString(sourceMapFile, mapContent);
+				getLog().info(String.format("Source map: %s [%s]", sourceMapFileName, new java.util.Date()));
+			}
         } catch (CoffeeScriptException ex) {
             getLog().error(String.format("Error: %s %s [%s]", coffeeFileName, ex.getMessage(), new java.util.Date()));
             return false;
@@ -165,6 +206,19 @@ public abstract class CoffeeScriptMojoBase extends AbstractMojo {
 
         return true;
     }
+
+	private boolean doDirectoryCheck(Path path, String fileName) {
+		if (path == null && fileName == null) {
+			return true;
+		}
+
+		if (Files.isDirectory(path)) {
+            getLog().warn(String.format("Cannot write to %s, as there is a directory with the same name", fileName));
+			return false;
+		} else {
+			return true;
+		}
+	}
 
     private void writeString(Path path, String jsSource) throws IOException {
         com.google.common.io.Files.write(jsSource, path.toFile(), charset);
