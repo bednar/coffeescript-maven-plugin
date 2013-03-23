@@ -63,6 +63,7 @@ Configuration options shown are default values and can be ignored for normal use
             <srcDir>${basedir}/src/main/webapp</srcDir>
             <outputDir>${basedir}/src/main/webapp</outputDir>
             <bare>false</bare>
+			<sourceMap>false</sourceMap>
             <modifiedOnly>false</modifiedOnly>
             <allowedDelete>true</allowedDelete>
             <compilerUrl></compilerUrl>
@@ -95,11 +96,12 @@ Compile coffeescript files to javascript files.
 
 ### Optional Parameters:
 
-* bare    Boolean	-	Bare mode. Default value is: false.
-* modifiedOnly	Boolean	-	Only compile modified files. Default value is: false.
-* outputDir	File	-	Output Directory. Expression: ${basedir}/src/main/webapp
-* srcDir	File	-	Source Directory. Expression: ${basedir}/src/main/webapp
-* compilerUrl   String  -   CoffeeScript compiler file url. It supports both url string and file path string. e.g. http://coffeescript.org/extras/coffee-script.js or ${basedir}/lib/coffee-script.js
+* `bare         Boolean` - Bare mode. Default value is: false.
+* `sourceMap    Boolean` - If true, will save source maps for compiled files. Also copies the source files to the output directory. Default value is: false.
+* `modifiedOnly	Boolean` - Only compile modified files. Default value is: false.
+* `outputDir    File`    - Output Directory. Expression: ${basedir}/src/main/webapp
+* `srcDir       File`    - Source Directory. Expression: ${basedir}/src/main/webapp
+* `compilerUrl  String`  - CoffeeScript compiler file url. It supports both url string and file path string. e.g. http://coffeescript.org/extras/coffee-script.js or ${basedir}/lib/coffee-script.js
 
 ## Goal:watch
 
