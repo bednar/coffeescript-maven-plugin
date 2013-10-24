@@ -172,9 +172,8 @@ public abstract class CoffeeScriptMojoBase extends AbstractMojo {
         Path jsParent = jsFile.getParent();
         if (!Files.exists(jsParent)) {
             Files.createDirectories(jsParent);
-        } else if (!doDirectoryCheck(jsFile, jsFileName)
-				|| !doDirectoryCheck(copiedCoffeeFile, coffeeFileName)
-				|| !doDirectoryCheck(sourceMapFile, sourceMapFileName)) {
+        } else if (Files.isDirectory(jsFile)) {
+            getLog().warn(String.format("Cannot compile to %s, as there is a Directory with the same name", jsFileName));
             return false;
         } else if (modifiedOnly && Files.exists(jsFile)) {
             if (Files.getLastModifiedTime(jsFile).compareTo(Files.getLastModifiedTime(coffeeFile)) > 0) {

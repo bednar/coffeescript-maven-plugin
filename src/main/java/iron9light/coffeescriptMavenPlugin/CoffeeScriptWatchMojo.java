@@ -82,7 +82,8 @@ public class CoffeeScriptWatchMojo extends CoffeeScriptMojoBase {
                         changed = true;
                     }
                 } else if (event.kind().name().equals(StandardWatchEventKinds.ENTRY_MODIFY.name()) || event.kind().name().equals(StandardWatchEventKinds.ENTRY_CREATE.name())) {
-                    compileCoffeeFile(compiler, file, null, jsFile, null, coffeeFileName, jsFileName, null);
+                    String sourceMapFileName = getSourceMapFileName(jsFileName);
+                    compileCoffeeFile(compiler, file, outputDirectory.resolve(coffeeFileName), jsFile, outputDirectory.resolve(sourceMapFileName), coffeeFileName, jsFileName, sourceMapFileName);
                     changed = true;
                 }
             }
