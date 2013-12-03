@@ -43,20 +43,23 @@
     <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
 
-  <distributionManagement>
-    <repository>
-      <id>sonatype-nexus-staging</id>
-      <name>oss.sonatype.org Staging Repository</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-    </repository>
-    <snapshotRepository>
-      <id>sonatype-nexus-snapshots</id>
-      <name>oss.sonatype.org github Release Repository Snapshot Repository</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
+    <distributionManagement>
 
-  <profiles>
+        <repository>
+            <id>releases-github</id>
+            <name>Releases GitHub</name>
+            <url>http://nexus-bednar.rhcloud.com/nexus/content/repositories/releases-github/</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>snapshots-github</id>
+            <name>Snapshots GitHub</name>
+            <url>http://nexus-bednar.rhcloud.com/nexus/content/repositories/snapshots-github/</url>
+        </snapshotRepository>
+
+    </distributionManagement>
+
+    <profiles>
     <profile>
       <id>release</id>
       <activation>
