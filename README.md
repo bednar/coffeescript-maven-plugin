@@ -1,4 +1,5 @@
 # Coffeescript Maven Plugin
+[![Build Status](https://travis-ci.org/bednar/coffeescript-maven-plugin.png?branch=master)](https://travis-ci.org/bednar/coffeescript-maven-plugin)
 
 Fork of [fork](https://github.com/TouK/coffeescript-maven-plugin) with deploy to Maven Repository.
 
