@@ -16,7 +16,6 @@ Fork of [fork](https://github.com/TouK/coffeescript-maven-plugin) with deploy to
 
 
 ## Repository
-
   
     <pluginRepository>
         <id>bednar-public</id>
