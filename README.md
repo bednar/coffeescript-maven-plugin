@@ -9,7 +9,7 @@ Fork of [fork](https://github.com/TouK/coffeescript-maven-plugin) with deploy to
     <plugin>
         <groupId>com.github.iron9light</groupId>
         <artifactId>coffeescript-maven-plugin</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3.bednar-SNAPSHOT</version>
         <configuration>
           ...
         </configuration>
