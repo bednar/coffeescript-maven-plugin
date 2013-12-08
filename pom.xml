@@ -118,7 +118,7 @@
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <postBuildHookScript>verify.bsh</postBuildHookScript>
           <debug>true</debug>
-          <ignoreFailures>true</ignoreFailures>
+          <ignoreFailures>false</ignoreFailures>
         </configuration>
         <executions>
           <execution>
